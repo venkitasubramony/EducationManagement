@@ -7,7 +7,7 @@ import mongoose from "mongoose";
        console.log('DB connected');
     }
     catch(err){
-        console.log(`Moongo DB connection failed`);
+        console.log(`Moongo DB connection failed`,err.message);
         process.exit(1);
 
     }
