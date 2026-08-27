@@ -35,7 +35,7 @@ export function Courses() {
                     departmentFilter
                 );
             }
-            await fetch(`http://localhost:3000/api/courses?${params.toString()}`).then((response) => {
+            await fetch(`${import.meta.env.VITE_API_URL}/api/courses?${params.toString()}`).then((response) => {
                 return response.json();
             })
                 .then((data) => {
@@ -91,7 +91,7 @@ export function Courses() {
         //console.log("Updated course:", updatedCourse);
 
         // API call goes here
-        const response = await axios.put(`http://localhost:3000/api/courses/${updatedCourse._id}`, updatedCourse);
+        const response = await axios.put(`${import.meta.env.VITE_API_URL}/api/courses/${updatedCourse._id}`, updatedCourse);
         console.log(response)
         if (response.statusText != 'OK') {
             alert(response.data);
@@ -101,7 +101,7 @@ export function Courses() {
         handleClose();
     };
     const handleDelete = async (CourseId) => {
-        const response = await axios.delete(`http://localhost:3000/api/courses/${CourseId}`);
+        const response = await axios.delete(`${import.meta.env.VITE_API_URL}/api/courses/${CourseId}`);
         console.log(response)
         if (response.statusText != 'OK') {
             alert(response.data.message);

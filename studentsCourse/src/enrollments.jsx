@@ -20,7 +20,7 @@ const Enrollments = (props) => {
                 params.append("search", search.trim());
             }
 
-            await fetch(`http://localhost:3000/api/enrollments?${params.toString()}`).then((response) => {
+            await fetch(`${import.meta.env.VITE_API_URL}/api/enrollments?${params.toString()}`).then((response) => {
                 return response.json();
             })
                 .then((data) => {

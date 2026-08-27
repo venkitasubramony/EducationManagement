@@ -26,7 +26,7 @@ const Students = (props) => {
         params.append("status", statusFilter);
       }
 
-      await fetch(`http://localhost:3000/api/students?${params.toString()}`).then((response) => {
+      await fetch(`${import.meta.env.VITE_API_URL}/api/students?${params.toString()}`).then((response) => {
         return response.json();
       })
         .then((data) => {
@@ -84,7 +84,7 @@ const Students = (props) => {
   const handleUpdate = async (updatedStudent) => {
 
     // API call goes here
-    const response = await axios.put(`http://localhost:3000/api/students/${updatedStudent._id}`, updatedStudent);
+    const response = await axios.put(`${import.meta.env.VITE_API_URL}/api/students/${updatedStudent._id}`, updatedStudent);
     console.log(response)
     if (response.statusText != 'OK') {
       alert(response.data);
@@ -92,7 +92,7 @@ const Students = (props) => {
     }
     alert(response.data);
     handleClose();
-    await fetch("http://localhost:3000/api/students").then((response) => {
+    await fetch(`${import.meta.env.VITE_API_URL}/api/students`).then((response) => {
       return response.json();
     })
       .then((data) => {
@@ -111,7 +111,7 @@ const Students = (props) => {
       return;
     }
 
-    const response = await axios.delete(`http://localhost:3000/api/students/${studentId}`);
+    const response = await axios.delete(`${import.meta.env.VITE_API_URL}/api/students/${studentId}`);
     console.log(response)
     if (response.statusText != 'OK') {
       alert(response.data.message);

@@ -34,7 +34,7 @@ export function AddCourse() {
         try {
             setLoading(true);
 
-            const response = await fetch("http://localhost:3000/api/addcourse", {
+            const response = await fetch(`${import.meta.env.VITE_API_URL}/api/addcourse`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",

@@ -27,8 +27,8 @@ const Auth = () => {
             //setLoading(true);
 
             const url = isLogin
-                ? "http://localhost:3000/api/auth/login"
-                : "http://localhost:3000/api/auth/register";
+                ? `${import.meta.env.VITE_API_URL}/api/auth/login`
+                : `${import.meta.env.VITE_API_URL}/api/auth/register`;
 
             const response = await fetch(url, {
                 method: "POST",

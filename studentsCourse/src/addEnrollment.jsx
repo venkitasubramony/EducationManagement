@@ -14,7 +14,7 @@ export function AddEnrollment() {
     const [students, setStudents] = useState([]);
     const [courses, setcourses] = useState([]);
     useEffect(() => {
-        fetch("http://localhost:3000/api/students").then((response) => {
+        fetch(`${import.meta.env.VITE_API_URL}/api/students`).then((response) => {
             return response.json();
         })
             .then((data) => {
@@ -22,7 +22,7 @@ export function AddEnrollment() {
                 setStudents(data);
             });
 
-        fetch("http://localhost:3000/api/courses").then((response) => {
+        fetch(`${import.meta.env.VITE_API_URL}/api/courses`).then((response) => {
             return response.json();
         })
             .then((data) => {
@@ -51,7 +51,7 @@ export function AddEnrollment() {
         try {
             setLoading(true);
 
-            const response = await fetch("http://localhost:3000/api/addenrollment", {
+            const response = await fetch(`${import.meta.env.VITE_API_URL}/api/addenrollment`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
