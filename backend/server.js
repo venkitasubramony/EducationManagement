@@ -7,7 +7,10 @@ import homeRoutes from './routes/home-routes.js'
 import adminRoutes from './routes/admin-routes.js'
 import dashboardRoutes from './routes/dashboard-routes.js'
 import path from "path";
-
+import { fileURLToPath } from "url";
+// Create __filename and __dirname for ES modules
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 //import mongoose from "mongoose";
 
 
