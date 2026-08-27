@@ -6,6 +6,8 @@ import authRoutes from './routes/auth-routes.js'
 import homeRoutes from './routes/home-routes.js'
 import adminRoutes from './routes/admin-routes.js'
 import dashboardRoutes from './routes/dashboard-routes.js'
+import path from "path";
+
 //import mongoose from "mongoose";
 
 
@@ -467,6 +469,28 @@ app.delete("/api/students/:id", async (req, res) => {
         });
     }
 })
+
+// --------------------
+// REACT STATIC FILES
+// --------------------
+
+const frontendPath = path.join(
+  __dirname,
+  "../frontend/dist"
+);
+
+app.use(express.static(frontendPath));
+
+// --------------------
+// REACT ROUTER FALLBACK
+// MUST COME LAST
+// --------------------
+
+app.get("/{*splat}", (req, res) => {
+  res.sendFile(
+    path.join(frontendPath, "index.html")
+  );
+});
 
 app.listen(port, () => {
     console.log(`App is runing on port ${port}`);
