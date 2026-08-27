@@ -34,9 +34,9 @@ app.use('/api/dashboard', dashboardRoutes)
 app.use('/api/home', homeRoutes)
 app.use('/api/admin', adminRoutes)
 
-app.get("/", (req, res) => {
-  res.send("Education Management API is running");
-});
+// app.get("/", (req, res) => {
+//   res.send("Education Management API is running");
+// });
 
 app.get("/api/students", async (req, res) => {
 
@@ -486,13 +486,22 @@ app.use(express.static(frontendPath));
 
 // --------------------
 // REACT ROUTER FALLBACK
-// MUST COME LAST
 // --------------------
 
-app.get("/{*splat}", (req, res) => {
-  res.sendFile(
-    path.join(frontendPath, "index.html")
-  );
+app.use((req, res, next) => {
+  if (req.path.startsWith("/api")) {
+    return next();
+  }
+
+  if (req.method === "GET") {
+    console.log("Serving React route:", req.originalUrl);
+
+    return res.sendFile(
+      path.join(frontendPath, "index.html")
+    );
+  }
+
+  next();
 });
 
 app.listen(port, () => {
