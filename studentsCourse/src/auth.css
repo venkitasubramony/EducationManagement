@@ -1,0 +1,266 @@
+.auth-page {
+    min-height: 100vh;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 30px;
+
+    box-sizing: border-box;
+
+    background: #f5f7fb;
+}
+
+
+/* CARD */
+
+.auth-card {
+    width: 100%;
+    max-width: 420px;
+
+    padding: 35px;
+
+    box-sizing: border-box;
+
+    background: white;
+
+    border: 1px solid #e5e7eb;
+
+    border-radius: 14px;
+
+    box-shadow:
+        0 15px 40px rgba(0, 0, 0, 0.08);
+}
+
+
+/* HEADER */
+
+.auth-header {
+    text-align: center;
+
+    margin-bottom: 30px;
+}
+
+.auth-logo {
+    width: 48px;
+    height: 48px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    margin: 0 auto 15px;
+
+    border-radius: 10px;
+
+    background: #4f46e5;
+
+    color: white;
+
+    font-size: 16px;
+    font-weight: 700;
+}
+
+.auth-header h1 {
+    margin: 0;
+
+    font-size: 25px;
+    font-weight: 700;
+
+    color: #111827;
+}
+
+.auth-header p {
+    margin: 8px 0 0;
+
+    font-size: 14px;
+
+    line-height: 1.5;
+
+    color: #6b7280;
+}
+
+
+/* FORM */
+
+.auth-form {
+    width: 100%;
+}
+
+.form-group {
+    margin-bottom: 18px;
+}
+
+.form-group label {
+    display: block;
+
+    margin-bottom: 7px;
+
+    font-size: 13px;
+    font-weight: 600;
+
+    color: #374151;
+}
+
+.form-group input {
+    width: 100%;
+    height: 46px;
+
+    box-sizing: border-box;
+
+    padding: 0 13px;
+
+    border: 1px solid #d1d5db;
+
+    border-radius: 8px;
+
+    outline: none;
+
+    background: white;
+
+    color: #111827;
+
+    font-size: 14px;
+
+    transition: border-color 0.2s,
+        box-shadow 0.2s;
+}
+
+.form-group input::placeholder {
+    color: #9ca3af;
+}
+
+.form-group input:focus {
+    border-color: #4f46e5;
+
+    box-shadow:
+        0 0 0 3px rgba(79, 70, 229, 0.1);
+}
+
+
+/* FORGOT PASSWORD */
+
+.forgot-password {
+    display: flex;
+    justify-content: flex-end;
+
+    margin-top: -5px;
+    margin-bottom: 20px;
+}
+
+.forgot-password button {
+    padding: 0;
+
+    border: none;
+
+    background: transparent;
+
+    color: #4f46e5;
+
+    font-size: 13px;
+    font-weight: 600;
+
+    cursor: pointer;
+}
+
+.forgot-password button:hover {
+    color: #4338ca;
+}
+
+
+/* SUBMIT */
+
+.auth-submit-btn {
+    width: 100%;
+    height: 46px;
+
+    border: none;
+
+    border-radius: 8px;
+
+    background: #4f46e5;
+
+    color: white;
+
+    font-size: 14px;
+    font-weight: 600;
+
+    cursor: pointer;
+
+    transition: background 0.2s;
+}
+
+.auth-submit-btn:hover {
+    background: #4338ca;
+}
+
+
+/* SWITCH */
+
+.auth-switch {
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    gap: 5px;
+
+    margin-top: 25px;
+
+    font-size: 13px;
+
+    color: #6b7280;
+}
+
+.auth-switch button {
+    padding: 0;
+
+    border: none;
+
+    background: transparent;
+
+    color: #4f46e5;
+
+    font-size: 13px;
+    font-weight: 600;
+
+    cursor: pointer;
+}
+
+.auth-switch button:hover {
+    color: #4338ca;
+}
+
+.auth-error {
+    margin-bottom: 18px;
+
+    padding: 11px 13px;
+
+    border: 1px solid #fecaca;
+
+    border-radius: 8px;
+
+    background: #fef2f2;
+
+    color: #dc2626;
+
+    font-size: 13px;
+    font-weight: 500;
+
+    line-height: 1.4;
+}
+
+
+/* MOBILE */
+
+@media (max-width: 480px) {
+
+    .auth-page {
+        padding: 20px;
+    }
+
+    .auth-card {
+        padding: 25px 20px;
+    }
+}

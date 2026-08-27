@@ -1,0 +1,162 @@
+* {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+    }
+
+    body {
+      background: #f5f7fb;
+      padding: 40px;
+      color: #374151;
+    }
+
+    .form-container {
+      max-width: 700px;
+      margin: auto;
+      background: white;
+      border: 1px solid #e5e7eb;
+      border-radius: 14px;
+      box-shadow: 0 8px 30px rgba(0, 0, 0, .06);
+    }
+
+    .form-header {
+      padding: 25px 30px;
+      border-bottom: 1px solid #e5e7eb;
+    }
+
+    .form-header h1 {
+      font-size: 23px;
+      color: #111827;
+    }
+
+    .form-header p {
+      margin-top: 6px;
+      color: #6b7280;
+      font-size: 14px;
+    }
+
+    .form-body {
+      padding: 30px;
+    }
+
+    .section {
+      margin-bottom: 28px;
+    }
+
+    .section-title {
+      font-size: 13px;
+      font-weight: 700;
+      text-transform: uppercase;
+      color: #111827;
+      margin-bottom: 17px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid #f0f0f0;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+    }
+
+    .full {
+      grid-column: 1 / -1;
+    }
+
+    label {
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    .required {
+      color: #dc2626;
+    }
+
+    input,
+    select,
+    textarea {
+      width: 100%;
+      padding: 12px 13px;
+      border: 1px solid #d1d5db;
+      border-radius: 8px;
+      outline: none;
+      font-size: 14px;
+      background: white;
+    }
+
+    input:focus,
+    select:focus,
+    textarea:focus {
+      border-color: #4f46e5;
+      box-shadow: 0 0 0 3px rgba(79, 70, 229, .08);
+    }
+
+    textarea {
+      min-height: 110px;
+      resize: vertical;
+    }
+
+    .form-footer {
+      padding: 20px 30px;
+      border-top: 1px solid #e5e7eb;
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+    }
+
+    button {
+      padding: 11px 20px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .cancel-btn {
+      background: white;
+      border: 1px solid #d1d5db;
+      color: #374151;
+    }
+
+    .save-btn {
+      background: #4f46e5;
+      border: 1px solid #4f46e5;
+      color: white;
+    }
+
+    .save-btn:hover {
+      background: #4338ca;
+    }
+
+    @media (max-width: 650px) {
+      body {
+        padding: 15px;
+      }
+
+      .form-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .full {
+        grid-column: auto;
+      }
+
+      .form-body {
+        padding: 20px;
+      }
+
+      .form-header {
+        padding: 20px;
+      }
+
+      .form-footer {
+        padding: 15px 20px;
+      }
+    }
