@@ -479,7 +479,7 @@ app.delete("/api/students/:id", async (req, res) => {
 
 const frontendPath = path.join(
   __dirname,
-  "../studentCourses/dist"
+  "./studentCourses/dist"
 );
 
 app.use(express.static(frontendPath));
