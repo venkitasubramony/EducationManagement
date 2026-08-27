@@ -27,7 +27,7 @@ function Dashboard(props) {
 
     useEffect(() => {
 
-        fetch("http://localhost:3000/api/students?recent=true").then((response) => {
+        fetch(`${import.meta.env.VITE_API_URL}/api/students?recent=true`).then((response) => {
             return response.json();
         })
             .then((data) => {
@@ -40,7 +40,7 @@ function Dashboard(props) {
             try {
 
                 const response = await fetch(
-                    "http://localhost:3000/api/dashboard/stats"
+                    `${import.meta.env.VITE_API_URL}/api/dashboard/stats`
 
                 );
 
@@ -85,9 +85,7 @@ function Dashboard(props) {
 
             try {
 
-                const response = await fetch(
-                    "http://localhost:3000/api/dashboard/popular-courses"
-                );
+                const response = await fetch(`${import.meta.env.VITE_API_URL}/api/dashboard/popular-courses`);
 
 
                 if (!response.ok) {
