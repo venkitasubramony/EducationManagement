@@ -29,6 +29,10 @@ app.use('/api/dashboard', dashboardRoutes)
 app.use('/api/home', homeRoutes)
 app.use('/api/admin', adminRoutes)
 
+app.get("/", (req, res) => {
+  res.send("Education Management API is running");
+});
+
 app.get("/api/students", async (req, res) => {
 
     const {
