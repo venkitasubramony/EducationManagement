@@ -6,11 +6,7 @@ import authRoutes from './routes/auth-routes.js'
 import homeRoutes from './routes/home-routes.js'
 import adminRoutes from './routes/admin-routes.js'
 import dashboardRoutes from './routes/dashboard-routes.js'
-import path from "path";
-import { fileURLToPath } from "url";
-// Create __filename and __dirname for ES modules
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+
 //import mongoose from "mongoose";
 
 
@@ -24,6 +20,9 @@ const app = express();
 const port = process.env.PORT || 3000;
 
 app.use(cors());
+app.use(cors({
+  origin: "https://educationmanagement-1.onrender.com/"
+}));
 // mongoose.connect('mongodb://localhost/EduManage').then(()=>{console.log('DB connected')})
 // .catch((err)=>{console.log(`Error:${err}`)})
 app.use(express.json());
@@ -470,37 +469,6 @@ app.delete("/api/students/:id", async (req, res) => {
         });
     }
 })
-
-// --------------------
-// REACT STATIC FILES
-// --------------------
-
-const frontendPath = path.join(
-  __dirname,
-  "../studentsCourse/dist"
-);
-
-app.use(express.static(frontendPath));
-
-// --------------------
-// REACT ROUTER FALLBACK
-// --------------------
-
-app.use((req, res, next) => {
-  if (req.path.startsWith("/api")) {
-    return next();
-  }
-
-  if (req.method === "GET") {
-    console.log("Serving React route:", req.originalUrl);
-
-    return res.sendFile(
-      path.join(frontendPath, "index.html")
-    );
-  }
-
-  next();
-});
 
 app.listen(port, () => {
     console.log(`App is runing on port ${port}`);
