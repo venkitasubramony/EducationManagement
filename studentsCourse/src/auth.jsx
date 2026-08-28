@@ -158,7 +158,7 @@ const Auth = () => {
 
                     {/* FORGOT PASSWORD */}
 
-                    {isLogin && (
+                    {/* {isLogin && (
                         <div className="forgot-password">
                             <button
                                 type="button"
@@ -171,7 +171,7 @@ const Auth = () => {
                                 Forgot password?
                             </button>
                         </div>
-                    )}
+                    )} */}
 
 
                     {/* SUBMIT */}
