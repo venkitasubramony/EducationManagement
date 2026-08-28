@@ -10,7 +10,7 @@ const Auth = () => {
         email: "",
         password: ""
     });
-    //const [loading, setLoading] = useState(false);
+    const [loading, setLoading] = useState(false);
     const handleChange = (e) => {
         const { name, value } = e.target;
 
@@ -24,7 +24,7 @@ const Auth = () => {
         e.preventDefault();
 
         try {
-            //setLoading(true);
+            setLoading(true);
 
             const url = isLogin
                 ? `${import.meta.env.VITE_API_URL}/api/auth/login`
@@ -64,7 +64,7 @@ const Auth = () => {
             console.log("Error:", error);
             alert("something went wrong");
         } finally {
-            //setLoading(false);
+            setLoading(false);
         }
 
         // console.log(
@@ -178,10 +178,10 @@ const Auth = () => {
 
                     <button
                         type="submit"
-                        className="auth-submit-btn"
+                        className="auth-submit-btn" disabled={loading}
                     >
-                        {isLogin
-                            ? "Login"
+                        {loading ? "Saving..." :isLogin
+                            ?  "Login"
                             : "Register"}
                     </button>
 
