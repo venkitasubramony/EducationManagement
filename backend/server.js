@@ -21,7 +21,7 @@ const port = process.env.PORT || 3000;
 
 app.use(cors());
 app.use(cors({
-  origin: "https://educationmanagement-1.onrender.com/"
+  origin: "https://educationmanagement.onrender.com/"
 }));
 // mongoose.connect('mongodb://localhost/EduManage').then(()=>{console.log('DB connected')})
 // .catch((err)=>{console.log(`Error:${err}`)})
