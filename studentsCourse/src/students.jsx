@@ -19,9 +19,13 @@ export function Student() {
   const handleChange = (e) => {
     const { name, value } = e.target;
 
+    const newValue =
+        name === "phone"
+            ? value.replace(/\D/g, "")
+            : value;
     setFormData((prev) => ({
       ...prev,
-      [name]: value,
+      [name]: newValue,
     }));
   };
 
@@ -149,6 +153,7 @@ export function Student() {
                 type="tel"
                 id="phone"
                 name="phone"
+                maxLength={10}
                 placeholder="91 XXXXX XXXXX"
                 value={formData.phone}
                 onChange={handleChange}
