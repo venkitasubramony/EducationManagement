@@ -180,7 +180,7 @@ const Auth = () => {
                         type="submit"
                         className="auth-submit-btn" disabled={loading}
                     >
-                        {loading ? "Saving..." :isLogin
+                        {loading ? "Submitting..." :isLogin
                             ?  "Login"
                             : "Register"}
                     </button>
