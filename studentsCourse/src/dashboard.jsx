@@ -32,7 +32,7 @@ function Dashboard(props) {
         })
             .then((data) => {
                 //console.log(data)
-                setStudents(data);
+                setStudents(data.Students);
             });
 
         const fetchDashboardStats = async () => {

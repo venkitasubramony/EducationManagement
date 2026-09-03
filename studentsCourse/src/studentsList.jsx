@@ -1,4 +1,5 @@
 import "./studentsList.css";
+import "./pagination.css";
 import NavBar from './components/nav'
 import TopBar from './components/topBar'
 import { useState, useEffect } from "react";
@@ -14,9 +15,26 @@ const Students = (props) => {
   // Sample data
   const [students, setStudents] = useState([]);
 
+
+
+  const [page, setPage] = useState(1);
+
+  const [pageSize, setPageSize] = useState(10);
+
+  const [pagination, setPagination] = useState({
+    currentPage: 1,
+    totalPages: 1,
+    totalStudents: 0,
+    hasNextPage: false,
+    hasPreviousPage: false
+  });
+
   useEffect(() => {
     const fetchStudents = async () => {
       const params = new URLSearchParams();
+
+      params.append("page", page);
+      params.append("limit", pageSize);
 
       if (search.trim()) {
         params.append("search", search.trim());
@@ -31,13 +49,14 @@ const Students = (props) => {
       })
         .then((data) => {
           //console.log(data)
-          setStudents(data);
+          setStudents(data.Students);
+          setPagination(data.pagination);
         });
 
     }
-    if(search || statusFilter){
+    if (search || statusFilter) {
 
-    
+
       const timer = setTimeout(() => {
         fetchStudents();
       }, 400);
@@ -46,12 +65,16 @@ const Students = (props) => {
       return () => {
         clearTimeout(timer);
       };
-    
+
     }
-    else{
+    else {
       fetchStudents();
     }
 
+  }, [page, pageSize, search, statusFilter]);
+
+  useEffect(() => {
+    setPage(1);
   }, [search, statusFilter]);
 
   const [selectedStudent, setSelectedStudent] = useState(null);
@@ -423,6 +446,83 @@ const Students = (props) => {
 
                 </table>
 
+
+                <div className="pagination">
+
+                  <div className="pagination-info">
+                    Showing page{" "}
+                    <strong>
+                      {pagination.currentPage}
+                    </strong>
+                    {" "}of{" "}
+                    <strong>
+                      {pagination.totalPages}
+                    </strong>
+
+                    <span>
+                      {" "}({pagination.totalStudents} students)
+                    </span>
+                  </div>
+
+
+                  <div className="pagination-actions">
+
+                    <button
+                      type="button"
+                      disabled={
+                        !pagination.hasPreviousPage
+                      }
+                      onClick={() =>
+                        setPage((prev) => prev - 1)
+                      }
+                    >
+                      Previous
+                    </button>
+
+
+                    {Array.from(
+                      {
+                        length:
+                          pagination.totalPages
+                      },
+                      (_, index) => index + 1
+                    ).map((pageNumber) => (
+
+                      <button
+                        type="button"
+                        key={pageNumber}
+                        className={
+                          pageNumber ===
+                            pagination.currentPage
+                            ? "active-page"
+                            : ""
+                        }
+                        onClick={() =>
+                          setPage(pageNumber)
+                        }
+                      >
+                        {pageNumber}
+                      </button>
+
+                    ))}
+
+
+                    <button
+                      type="button"
+                      disabled={
+                        !pagination.hasNextPage
+                      }
+                      onClick={() =>
+                        setPage((prev) => prev + 1)
+                      }
+                    >
+                      Next
+                    </button>
+
+                  </div>
+
+                </div>
+                {/* Pagination completes */}
               </div>
 
             </div>

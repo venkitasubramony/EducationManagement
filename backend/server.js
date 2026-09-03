@@ -38,8 +38,17 @@ app.get("/api/students", async (req, res) => {
     const {
         search,
         status,
-        recent
+        recent,
+        page = 1,
+        limit = 10
     } = req.query;
+
+   
+        const currentPage = Math.max(Number(page) || 1, 1);
+        const pageSize = Math.max(Number(limit) || 10, 1);
+   
+    
+
 
     const filter = {};
 
@@ -71,12 +80,24 @@ app.get("/api/students", async (req, res) => {
     if (status && status !== "all") {
         filter.status = status;
     }
+   
+    const skip = (currentPage - 1) * pageSize;
+   
+    // total matching students
+    const totalStudents = await Student.countDocuments(filter);
     const pipeline = [
         // Apply your existing student filters
         {
             $match: filter
         },
 
+        {
+            $skip: skip
+        },
+        {
+             $limit: pageSize
+        },
+       
         // Join enrollments
         {
             $lookup: {
@@ -86,7 +107,7 @@ app.get("/api/students", async (req, res) => {
                 as: "enrollments"
             }
         },
-
+        
         // Join courses using the course IDs
         // inside the enrollments array
         {
@@ -112,6 +133,7 @@ app.get("/api/students", async (req, res) => {
             }
         }
     ];
+    
     // Recent students
     if (recent === "true") {
 
@@ -125,10 +147,22 @@ app.get("/api/students", async (req, res) => {
             $limit: 5
         });
     }
+    const totalPages = Math.ceil(totalStudents / pageSize);
     const Students = await Student.aggregate(pipeline)
 
     // const Students = await Student.find(filter);
-    return res.status(200).send(Students)
+    return res.status(200).send({
+        Students, pagination: {
+            currentPage,
+            pageSize,
+            totalStudents,
+            totalPages,
+            hasNextPage:
+                currentPage < totalPages,
+            hasPreviousPage:
+                currentPage > 1
+        }
+    })
 })
 
 app.get("/api/courses", async (req, res) => {
