@@ -22,7 +22,7 @@ const Students = (props) => {
 
   const [page, setPage] = useState(1);
 
-  const [pageSize, setPageSize] = useState(10);
+  const pageSize = 10;
 
   const [pagination, setPagination] = useState({
     currentPage: 1,
@@ -77,7 +77,13 @@ const Students = (props) => {
   }, [page, pageSize, search, statusFilter]);
 
   useEffect(() => {
-    setPage(1);
+
+    const settingPage = () =>{
+      setPage(1);
+    }
+    settingPage();
+    
+
   }, [search, statusFilter]);
 
   const [selectedStudent, setSelectedStudent] = useState(null);

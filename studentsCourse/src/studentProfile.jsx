@@ -90,8 +90,7 @@ const StudentProfile = () => {
 
                         return;
                     }
-
-
+                    
                     setStudent(
                         data.student
                     );
@@ -117,6 +116,13 @@ const StudentProfile = () => {
 
     }, [id]);
 
+    if (loading) {
+        return <p>Loading student profile...</p>;
+    }
+
+    if (error) {
+        return <p>{error}</p>;
+    }
 
     const initials = student?.fullName
         ?.trim()
