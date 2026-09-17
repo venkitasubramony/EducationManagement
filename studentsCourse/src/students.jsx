@@ -13,6 +13,10 @@ export function Student() {
     status: ""  
   });
 
+  const [file, setFile] = useState(null);
+  const [preview, setPreview] = useState(null);
+  const [error, setError] = useState("");
+
   const [loading, setLoading] = useState(false);
 
   // Handle input changes
@@ -27,7 +31,64 @@ export function Student() {
       ...prev,
       [name]: newValue,
     }));
+
+   
   };
+
+   const handleFileChange = (e) => {
+        const selectedFile = e.target.files[0];
+
+        if (!selectedFile) {
+            setFile(null);
+            setPreview("");
+            return;
+        }
+
+        const allowedTypes = [
+            "image/jpeg",
+            "image/png",
+            "image/webp"
+        ];
+
+
+        if (
+            !allowedTypes.includes(
+                selectedFile.type
+            )
+        ) {
+
+            setError(
+                "Only JPG, PNG and WEBP images are allowed"
+            );
+
+            e.target.value = "";
+
+            return;
+        }
+
+
+        if (
+            selectedFile.size >
+            5 * 1024 * 1024
+        ) {
+
+            setError(
+                "Image must be less than 5 MB"
+            );
+
+            e.target.value = "";
+
+            return;
+        }
+
+
+        setError("");
+
+        setFile(selectedFile);
+
+        // Optional image preview
+        setPreview(URL.createObjectURL(selectedFile));
+    };
 
   // Submit form
   const handleSubmit = async (e) => {
@@ -36,12 +97,25 @@ export function Student() {
     try {
       setLoading(true);
 
+      const data = new FormData();
+
+      data.append("fullName", formData.fullName);
+      data.append("studentId", formData.studentId);
+      data.append("email", formData.email);
+      data.append("phone", formData.phone);
+      data.append("status", formData.status);
+
+      if (file) {
+          data.append("photo", file);
+      }
+
       const response = await fetch(`${import.meta.env.VITE_API_URL}/api/addstudent`, {
         method: "POST",
-        headers: {
+        /* headers: {
           "Content-Type": "application/json",
-        },
-        body: JSON.stringify(formData),
+        }, */
+        //body: JSON.stringify(formData),
+        body: data
       });
 
       if (!response.ok) {
@@ -62,6 +136,8 @@ export function Student() {
         phone: "",
         status: "" 
       });
+      setFile(null);
+      setPreview("");
 
     } catch (error) {
       console.error("Error:", error);
@@ -86,6 +162,11 @@ export function Student() {
           <h1>Add Student</h1>
           <p>Enter the student's basic information.</p>
         </div>
+         {error && (
+                <div className="form-error">
+                    {error}
+                </div>
+            )}
         <form onSubmit={handleSubmit}>
 
           <div className="form-body">
@@ -180,6 +261,36 @@ export function Student() {
               </select>
             </div>
 
+            {/* FILE UPLOAD */}
+
+            <div className="form-group">
+                <label>
+                    Student Photo
+                </label>
+
+                <input
+                    type="file"
+                    accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp"
+                    onChange={handleFileChange}
+                />
+                <small>
+                        JPG, PNG or WEBP.
+                        Maximum 5 MB.
+                    </small>
+            </div>
+
+
+            {/* PREVIEW */}
+
+            {preview && (
+                <div className="image-preview">
+                    <img
+                        src={preview}
+                        alt="Student preview"
+                    />
+                </div>
+            )}
+
           </div>
 
 
@@ -189,14 +300,19 @@ export function Student() {
             <button
               type="reset"
               className="cancel-btn"
-               onClick={() =>
+               onClick={() =>{
+
+               
                 setFormData({
                   fullName: "",
                   studentId: "",
                   email: "",
                   phone: "",
                   status: ""
-                })
+                });
+                setFile(null);
+                setPreview("");
+                }
               }
             >
               Cancel

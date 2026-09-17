@@ -334,7 +334,7 @@
 
     gap: 8px;
 }
-
+.view-student-btn,
 .edit-student-btn,
 .delete-student-btn {
     padding: 7px 11px;
@@ -370,6 +370,22 @@
 
 .delete-student-btn:hover {
     background: #fef2f2;
+}
+
+/* VIEW */
+
+.view-student-btn {
+    border: 1px solid #c7d2fe;
+
+    background: #eef2ff;
+
+    color: #4f46e5;
+}
+
+.view-student-btn:hover {
+    background: #e0e7ff;
+
+    border-color: #a5b4fc;
 }
 
 

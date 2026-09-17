@@ -29,6 +29,10 @@ const StudentSchema = new mongoose.Schema(
             type: Date,
             default: Date.now
         },
+        photo: {
+            type: String,
+            default: null
+        }
 
     }
 )

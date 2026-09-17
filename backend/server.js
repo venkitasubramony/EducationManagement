@@ -7,7 +7,7 @@ import homeRoutes from './routes/home-routes.js'
 import adminRoutes from './routes/admin-routes.js'
 import dashboardRoutes from './routes/dashboard-routes.js'
 
-//import mongoose from "mongoose";
+import mongoose from "mongoose";
 
 
 import { Student } from "./mongoose/schema/student.js";
@@ -15,6 +15,15 @@ import { Course } from "./mongoose/schema/course.js";
 import { Enrollment } from "./mongoose/schema/enrollment.js"
 
 import cors from "cors";
+import multer from "multer";
+import path from "path";
+import fs from "fs";
+import { fileURLToPath } from "url";
+import { dirname } from "path";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
 connectDB();
 const app = express();
 const port = process.env.PORT || 3000;
@@ -31,7 +40,121 @@ app.use('/api/dashboard', dashboardRoutes)
 app.use('/api/home', homeRoutes)
 app.use('/api/admin', adminRoutes)
 
+// -------------------------
+// Upload directory
+// -------------------------
 
+const uploadDir = path.join(
+    __dirname,
+    "uploads"
+);
+
+if (!fs.existsSync(uploadDir)) {
+    fs.mkdirSync(
+        uploadDir,
+        {
+            recursive: true
+        }
+    );
+}
+
+
+// -------------------------
+// Make uploads publicly accessible
+// -------------------------
+
+app.use(
+    "/uploads",
+    express.static(uploadDir)
+);
+
+
+// -------------------------
+// Multer configuration
+// -------------------------
+
+const storage = multer.diskStorage({
+
+    destination: function (
+        req,
+        file,
+        cb
+    ) {
+        cb(null, uploadDir);
+    },
+
+    filename: function (
+        req,
+        file,
+        cb
+    ) {
+
+        const extension =
+            path.extname(
+                file.originalname
+            );
+
+        const filename =
+            Date.now() +
+            "-" +
+            Math.round(
+                Math.random() * 1e9
+            ) +
+            extension;
+
+        cb(
+            null,
+            filename
+        );
+    }
+});
+
+const fileFilter = (
+    req,
+    file,
+    cb
+) => {
+
+    const allowedTypes = [
+        "image/jpeg",
+        "image/png",
+        "image/webp"
+    ];
+
+    if (
+        allowedTypes.includes(
+            file.mimetype
+        )
+    ) {
+        cb(
+            null,
+            true
+        );
+    } else {
+
+        cb(
+            new Error(
+                "Only JPG, PNG and WEBP images are allowed"
+            ),
+            false
+        );
+    }
+};
+
+
+const upload = multer({
+
+    storage,
+
+    limits: {
+        fileSize:
+            5 *
+            1024 *
+            1024
+    },
+
+    fileFilter
+});
 
 app.get("/api/students", async (req, res) => {
 
@@ -43,11 +166,11 @@ app.get("/api/students", async (req, res) => {
         limit = 10
     } = req.query;
 
-   
-        const currentPage = Math.max(Number(page) || 1, 1);
-        const pageSize = Math.max(Number(limit) || 10, 1);
-   
-    
+
+    const currentPage = Math.max(Number(page) || 1, 1);
+    const pageSize = Math.max(Number(limit) || 10, 1);
+
+
 
 
     const filter = {};
@@ -80,9 +203,9 @@ app.get("/api/students", async (req, res) => {
     if (status && status !== "all") {
         filter.status = status;
     }
-   
+
     const skip = (currentPage - 1) * pageSize;
-   
+
     // total matching students
     const totalStudents = await Student.countDocuments(filter);
     const pipeline = [
@@ -95,9 +218,9 @@ app.get("/api/students", async (req, res) => {
             $skip: skip
         },
         {
-             $limit: pageSize
+            $limit: pageSize
         },
-       
+
         // Join enrollments
         {
             $lookup: {
@@ -107,7 +230,7 @@ app.get("/api/students", async (req, res) => {
                 as: "enrollments"
             }
         },
-        
+
         // Join courses using the course IDs
         // inside the enrollments array
         {
@@ -133,7 +256,7 @@ app.get("/api/students", async (req, res) => {
             }
         }
     ];
-    
+
     // Recent students
     if (recent === "true") {
 
@@ -164,6 +287,121 @@ app.get("/api/students", async (req, res) => {
         }
     })
 })
+
+
+app.get("/api/students/:id/profile", async (req, res) => {
+    try {
+        const { id } = req.params;
+
+        // Validate MongoDB ObjectId
+        if (!mongoose.Types.ObjectId.isValid(id)) {
+            return res.status(400).json({
+                message: "Invalid student ID"
+            });
+        }
+
+        const studentProfile = await Student.aggregate([
+
+            // Get selected student
+            {
+                $match: {
+                    _id: new mongoose.Types.ObjectId(id)
+                }
+            },
+
+            // Join enrollments
+            {
+                $lookup: {
+                    from: "enrollments",
+                    localField: "_id",
+                    foreignField: "student",
+                    as: "enrollments"
+                }
+            },
+
+            // Join courses referenced by enrollments
+            {
+                $lookup: {
+                    from: "courses",
+                    localField: "enrollments.course",
+                    foreignField: "_id",
+                    as: "courses"
+                }
+            },
+
+            // Build frontend-friendly response
+            {
+                $project: {
+                    fullName: 1,
+                    studentId: 1,
+                    email: 1,
+                    phone: 1,
+                    status: 1,
+
+
+                    enrollments: {
+                        $map: {
+                            input: "$enrollments",
+                            as: "enrollment",
+
+                            in: {
+                                _id: "$$enrollment._id",
+
+                                enrollmentDate:
+                                    "$$enrollment.enrollmentDate",
+
+                                status:
+                                    "$$enrollment.status",
+
+                                course: {
+                                    $arrayElemAt: [
+                                        {
+                                            $filter: {
+                                                input: "$courses",
+                                                as: "course",
+
+                                                cond: {
+                                                    $eq: [
+                                                        "$$course._id",
+                                                        "$$enrollment.course"
+                                                    ]
+                                                }
+                                            }
+                                        },
+                                        0
+                                    ]
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        ]);
+
+
+        if (studentProfile.length === 0) {
+            return res.status(404).json({
+                message: "Student not found"
+            });
+        }
+
+
+        return res.status(200).json({
+            student: studentProfile[0]
+        });
+
+    } catch (error) {
+
+        console.error(
+            "Student profile error:",
+            error
+        );
+
+        return res.status(500).json({
+            message: "Unable to fetch student profile"
+        });
+    }
+});
 
 app.get("/api/courses", async (req, res) => {
 
@@ -209,23 +447,106 @@ app.get("/api/courses", async (req, res) => {
 
 
 
-app.post('/api/addstudent', async (req, res) => {
+app.post('/api/addstudent', upload.single("photo"), async (req, res) => {
 
     //console.log(req.body);
     const { body } = req; //if validation schema is not used
+//console.log(req);
+    const newStudent = new Student({
+        fullName: body.fullName,
 
-    const newStudent = new Student(body);
+        studentId: body.studentId,
+
+        email: body.email,
+
+        phone: body.phone,
+
+        status:
+            body.status ||
+            "active",
+
+        photo:
+            req.file
+                ? req.file.filename
+                : null
+    });
     try {
-        const savedStudent = await newStudent.save();
-        return res.status(201).send(savedStudent);
+        
+         const savedStudent = await newStudent.save();
+        return res.status(201).send(savedStudent); 
+         
 
     }
     catch (err) {
         console.log(err);
+        if (req.file) {
+
+            fs.unlink(
+                req.file.path,
+                () => { }
+            );
+        }
         return res.status(400).send("Student not saved");
     }
 
 })
+
+// -------------------------
+// Multer error handling
+// -------------------------
+
+app.use(
+    (
+        error,
+        req,
+        res,
+        next
+    ) => {
+
+        if (
+            error instanceof
+            multer.MulterError
+        ) {
+
+            if (
+                error.code ===
+                "LIMIT_FILE_SIZE"
+            ) {
+
+                return res
+                    .status(400)
+                    .json({
+                        message:
+                            "Image size must be less than 5 MB"
+                    });
+            }
+
+            return res
+                .status(400)
+                .json({
+                    message:
+                        error.message
+                });
+        }
+
+
+        if (
+            error.message ===
+            "Only JPG, PNG and WEBP images are allowed"
+        ) {
+
+            return res
+                .status(400)
+                .json({
+                    message:
+                        error.message
+                });
+        }
+
+
+        next(error);
+    }
+);
 
 app.post('/api/addcourse', async (req, res) => {
 

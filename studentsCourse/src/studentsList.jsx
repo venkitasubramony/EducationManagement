@@ -5,9 +5,12 @@ import TopBar from './components/topBar'
 import { useState, useEffect } from "react";
 import EditStudentModal from './editStudentModal';
 import axios from "axios";
+import { useNavigate } from "react-router";
+
+
 
 const Students = (props) => {
-
+  const navigate = useNavigate();
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
   //const [courseFilter, setCourseFilter] = useState("all");
@@ -410,7 +413,14 @@ const Students = (props) => {
                           <td>
 
                             <div className="student-actions">
-
+                              <button
+                                className="view-student-btn"
+                                onClick={() =>
+                                  navigate(`/studentProfile/${student._id}`)
+                                }
+                              >
+                                View
+                              </button>
                               <button
                                 className="edit-student-btn"
                                 onClick={() =>
