@@ -7,6 +7,7 @@ import Students from './studentsList';
 import Enrollments from './enrollments';
 import {AddEnrollment} from './addEnrollment'
 import StudentProfile from './studentProfile'
+import CourseDetails from './courseDetails'
 import Auth from "./auth";
 import { Routes, Route, useNavigate } from "react-router";
 
@@ -33,6 +34,7 @@ function App() {
       <Route path="enrollments" element={<ProtectedRoute><Enrollments addEnrollment={addEnrollment}/></ProtectedRoute>} />
       <Route path="addEnrollment" element={<ProtectedRoute><AddEnrollment /></ProtectedRoute>} />
       <Route path="studentProfile/:id" element={<ProtectedRoute><StudentProfile /></ProtectedRoute>} />
+      <Route path="/courses/:id" element={<ProtectedRoute><CourseDetails /></ProtectedRoute>} />
     </Routes>
   )
 }

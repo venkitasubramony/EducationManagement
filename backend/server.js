@@ -446,6 +446,318 @@ app.get("/api/courses", async (req, res) => {
 })
 
 
+app.get("/api/courses/:id/details", async (req, res) => {
+
+    try {
+
+        const { id } = req.params;
+
+
+        // Validate MongoDB ObjectId
+
+        if (!mongoose.Types.ObjectId.isValid(id)) {
+
+            return res.status(400).json({
+                message: "Invalid course ID"
+            });
+
+        }
+
+
+        const courseId =
+            new mongoose.Types.ObjectId(id);
+
+
+        const result =
+            await Course.aggregate([
+
+                // --------------------------------
+                // Find the course
+                // --------------------------------
+
+                {
+                    $match: {
+                        _id: courseId
+                    }
+                },
+
+
+                // --------------------------------
+                // Get enrollments for this course
+                // --------------------------------
+
+                {
+                    $lookup: {
+                        from: "enrollments",
+
+                        localField: "_id",
+
+                        foreignField: "course",
+
+                        as: "enrollments"
+                    }
+                },
+
+
+                // --------------------------------
+                // Get students from enrollments
+                // --------------------------------
+
+                {
+                    $lookup: {
+                        from: "students",
+
+                        localField:
+                            "enrollments.student",
+
+                        foreignField: "_id",
+
+                        as: "students"
+                    }
+                },
+
+
+                // --------------------------------
+                // Create enrolledStudents array
+                // --------------------------------
+
+                {
+                    $project: {
+
+                        _id: 1,
+
+                        coursename: 1,
+
+                        coursecode: 1,
+
+                        department: 1,
+
+                        duration: 1,
+
+                        capacity: 1,
+
+                        description: 1,
+
+                        status: 1,
+
+
+                        enrolledStudents: {
+
+                            $map: {
+
+                                input: "$enrollments",
+
+                                as: "enrollment",
+
+                                in: {
+
+                                    _id:
+                                        "$$enrollment._id",
+
+                                    enrollmentDate:
+                                        "$$enrollment.enrollmentDate",
+
+                                    status:
+                                        "$$enrollment.status",
+
+
+                                    student: {
+
+                                        $arrayElemAt: [
+
+                                            {
+
+                                                $filter: {
+
+                                                    input:
+                                                        "$students",
+
+                                                    as: "student",
+
+                                                    cond: {
+
+                                                        $eq: [
+
+                                                            "$$student._id",
+
+                                                            "$$enrollment.student"
+
+                                                        ]
+
+                                                    }
+
+                                                }
+
+                                            },
+
+                                            0
+
+                                        ]
+
+                                    }
+
+                                }
+
+                            }
+
+                        }
+
+                    }
+                },
+
+
+                // --------------------------------
+                // Remove unwanted student fields
+                // --------------------------------
+
+                {
+                    $project: {
+
+                        _id: 1,
+
+                        coursename: 1,
+
+                        coursecode: 1,
+
+                        department: 1,
+
+                        duration: 1,
+
+                        capacity: 1,
+
+                        description: 1,
+
+                        status: 1,
+
+
+                        enrolledStudents: {
+
+                            $map: {
+
+                                input:
+                                    "$enrolledStudents",
+
+                                as:
+                                    "enrollment",
+
+                                in: {
+
+                                    _id:
+                                        "$$enrollment._id",
+
+                                    enrollmentDate:
+                                        "$$enrollment.enrollmentDate",
+
+                                    status:
+                                        "$$enrollment.status",
+
+                                    student: {
+
+                                        _id:
+                                            "$$enrollment.student._id",
+
+                                        fullName:
+                                            "$$enrollment.student.fullName",
+
+                                        studentId:
+                                            "$$enrollment.student.studentId",
+
+                                        email:
+                                            "$$enrollment.student.email",
+
+                                        phone:
+                                            "$$enrollment.student.phone",
+
+                                        status:
+                                            "$$enrollment.student.status"
+
+                                    }
+
+                                }
+
+                            }
+
+                        }
+
+                    }
+
+                }
+
+            ]);
+
+
+        // --------------------------------
+        // Course not found
+        // --------------------------------
+
+        if (result.length === 0) {
+
+            return res.status(404).json({
+                message: "Course not found"
+            });
+
+        }
+
+
+        // --------------------------------
+        // Calculate enrollment count
+        // --------------------------------
+
+        const course = result[0];
+
+
+        const enrolledCount =
+            course.enrolledStudents.length;
+
+
+        const availableSeats =
+            Math.max(
+                course.capacity -
+                enrolledCount,
+
+                0
+            );
+
+
+        // --------------------------------
+        // Send response
+        // --------------------------------
+
+        return res.status(200).json({
+
+            course: {
+
+                ...course,
+
+                enrolledCount,
+
+                availableSeats
+
+            }
+
+        });
+
+
+    } catch (error) {
+
+        console.error(
+            "Course details error:",
+            error
+        );
+
+
+        return res.status(500).json({
+
+            message:
+                "Unable to fetch course details"
+
+        });
+
+    }
+
+});
+
+
 
 app.post('/api/addstudent', upload.single("photo"), async (req, res) => {
 

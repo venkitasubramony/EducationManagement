@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate } from "react-router";
+import { useNavigate, useLocation  } from "react-router";
 function TopBar() {
 
     const [showProfileMenu, setShowProfileMenu] = useState(false);
@@ -25,11 +25,53 @@ function TopBar() {
         navigate("/");
     };
 
+    const location = useLocation();
+
+    const getPageTitle = () => {
+
+        const path = location.pathname;
+
+
+        if (path === "/dashboard") {
+            return "Dashboard";
+        }
+
+        if (path === "/students") {
+            return "Students";
+        }
+
+        if (path === "/students/add") {
+            return "Add Student";
+        }
+
+        if (path.startsWith("/studentProfile/")) {
+            return "Student Profile";
+        }
+
+        if (path === "/courses") {
+            return "Courses";
+        }
+
+        if (path === "/courses/add") {
+            return "Add Course";
+        }
+
+        if (path.startsWith("/courses/")) {
+            return "Course Details";
+        }
+
+        if (path === "/enrollments") {
+            return "Enrollments";
+        }
+
+        return "Dashboard";
+    };
+
     return (
         <header className="topbar">
 
             <div className="page-title">
-                Dashboard
+                {getPageTitle()}
             </div>
 
             <div className="top-actions">

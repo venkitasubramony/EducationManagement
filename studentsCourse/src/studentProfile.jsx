@@ -155,7 +155,7 @@ const StudentProfile = () => {
 
     return (
         <>
-        <title>Student List</title>
+        <title>Student Profile</title>
       <div className="app">
         <NavBar />
         <main className="main">

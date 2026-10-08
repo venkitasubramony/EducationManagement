@@ -1,13 +1,13 @@
 import "./courses.css";
 import NavBar from './components/nav'
 import TopBar from './components/topBar'
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router";
 import EditCourseModal from './editCourseModal'
 import { useState, useEffect } from "react";
 import axios from "axios";
 
 export function Courses() {
-
+     const navigate = useNavigate();
     const [courses, setCourses] = useState([]);
     const [search, setSearch] = useState("");
 
@@ -251,7 +251,14 @@ export function Courses() {
 
                                                     <td>
                                                         <div className="actions">
-
+                                                            <button
+                                                                className="view-student-btn"
+                                                                onClick={() =>
+                                                                    navigate(`/courses/${course._id}`)
+                                                                }
+                                                            >
+                                                                View
+                                                            </button>
                                                             <button className="action-btn" onClick={() => handleEdit(course)}>
                                                                 Edit
                                                             </button>
