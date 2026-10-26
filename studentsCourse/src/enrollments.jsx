@@ -44,14 +44,14 @@ const Enrollments = (props) => {
             return;
         }
 
-        const response = await axios.delete(`http://localhost:3000/api/enrollments/${id}`);
+        const response = await axios.delete(`${import.meta.env.VITE_API_URL}/api/enrollments/${id}`);
         //console.log(response)
         if (response.statusText != 'OK') {
             alert(response.data.message);
             return;
         }
         alert(response.data.message);
-        await fetch(`http://localhost:3000/api/enrollments`).then((response) => {
+        await fetch(`${import.meta.env.VITE_API_URL}/api/enrollments`).then((response) => {
             return response.json();
         })
             .then((data) => {
