@@ -228,7 +228,7 @@ const Enrollments = (props) => {
 
                                                             <span
                                                                 className={`enrollment-status ${enrollment.status ===
-                                                                    "Active"
+                                                                    "active"
                                                                     ? "status-active"
                                                                     : "status-inactive"
                                                                     }`}

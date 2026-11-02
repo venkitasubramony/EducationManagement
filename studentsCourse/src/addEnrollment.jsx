@@ -17,9 +17,8 @@ export function AddEnrollment() {
         fetch(`${import.meta.env.VITE_API_URL}/api/students`).then((response) => {
             return response.json();
         })
-            .then((data) => {
-
-                setStudents(data);
+            .then((data) => {                
+                setStudents(data.Students || []);
             });
 
         fetch(`${import.meta.env.VITE_API_URL}/api/courses`).then((response) => {

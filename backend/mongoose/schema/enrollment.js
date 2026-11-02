@@ -29,4 +29,10 @@ const EnrollmentSchema = new mongoose.Schema(
         timestamps: true
     }
 )
+
+// One enrollment record per student/course combination.
+EnrollmentSchema.index(
+  { student: 1, course: 1 },
+  { unique: true }
+);
 export const Enrollment = mongoose.model("Enrollment", EnrollmentSchema)

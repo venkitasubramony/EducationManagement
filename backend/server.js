@@ -880,7 +880,7 @@ app.post('/api/addcourse', async (req, res) => {
 
 app.post('/api/addenrollment', async (req, res) => {
 
-    //console.log(req.body);
+    //console.log(req.body);    
 
     try {
 
@@ -890,6 +890,42 @@ app.post('/api/addenrollment', async (req, res) => {
             status
         } = req.body;
 
+        if (
+            !mongoose.Types.ObjectId.isValid(studentId) ||
+            !mongoose.Types.ObjectId.isValid(courseId)
+        ) {
+            return res.status(400).json({
+            message: "Invalid student ID or course ID"
+            });
+        }
+
+        // Check whether this student already has an enrollment.
+        const existingEnrollment = await Enrollment.findOne({
+            student: studentId,
+            course: courseId
+        });
+
+        if (existingEnrollment) {
+            throw new Error("DUPLICATE_ENROLLMENT");
+        }
+
+        // Atomically reserve a seat only if capacity is not full.
+        const updatedCourse = await Course.findOneAndUpdate(
+            {
+            _id: courseId,
+            status: "active",
+            $expr: {
+                $lt: ["$activeEnrollmentCount", "$capacity"]
+            }
+            },
+            {
+            $inc: { activeEnrollmentCount: 1 }
+            }
+        );
+
+        if (!updatedCourse) {
+            throw new Error("COURSE_FULL");
+        }
 
         const newEnrollment = new Enrollment({
             student: studentId,
@@ -1016,6 +1052,22 @@ app.delete("/api/enrollments/:id", async (req, res) => {
             return res.status(404).json({
                 message: "Enrollment not found"
             });
+        }
+
+        if (deletedEnroll.status === "active") {
+            const course = await Course.findOneAndUpdate(
+            {
+                _id: deletedEnroll.course,
+                activeEnrollmentCount: { $gt: 0 }
+            },
+            {
+                $inc: { activeEnrollmentCount: -1 }
+            }
+            );
+
+            if (!course) {
+                throw new Error("COURSE_COUNTER_ERROR");
+            }
         }
 
         res.status(200).json({
