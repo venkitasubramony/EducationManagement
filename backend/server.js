@@ -906,7 +906,8 @@ app.post('/api/addenrollment', async (req, res) => {
         });
 
         if (existingEnrollment) {
-            throw new Error("DUPLICATE_ENROLLMENT");
+            //throw new Error("DUPLICATE_ENROLLMENT");
+            return res.status(400).json({message:"Duplicate Enrollment"});
         }
 
         // Atomically reserve a seat only if capacity is not full.
@@ -924,7 +925,8 @@ app.post('/api/addenrollment', async (req, res) => {
         );
 
         if (!updatedCourse) {
-            throw new Error("COURSE_FULL");
+            //throw new Error("COURSE_FULL");
+            return res.status(400).json({message:"Course Full"});
         }
 
         const newEnrollment = new Enrollment({
@@ -938,7 +940,7 @@ app.post('/api/addenrollment', async (req, res) => {
     }
     catch (err) {
         console.log(err);
-        return res.status(400).send("Enrollment not saved");
+        return res.status(400).json({message:"Enrollment not saved"});
     }
 
 })

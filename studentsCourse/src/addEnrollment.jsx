@@ -57,14 +57,19 @@ export function AddEnrollment() {
                 },
                 body: JSON.stringify(formData),
             });
-
+            
+            const result = await response.json();
+           
             if (!response.ok) {
-                throw new Error("Failed to create enrollment");
+                const data = result.message;
+                //throw new Error(data);
+                alert(data);
+                return;
             }
 
-            const result = await response.json();
+            
 
-            console.log("Enrollment added:", result);
+            //console.log("Enrollment added:", result);
 
             alert("Enrollment added successfully!");
 
